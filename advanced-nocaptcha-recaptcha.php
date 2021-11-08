@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Advanced noCaptcha & invisible Captcha
-Plugin URI: https://www.wpwhitesecurity.com/wordpress-plugins/captcha-plugin-wordpress/
+Plugin URI: https://github.com/lphilippo/advanced-nocaptcha-recaptcha
 Description: Show noCaptcha or invisible captcha in Comment Form, bbPress, BuddyPress, WooCommerce, CF7, Login, Register, Lost Password, Reset Password. Also can implement in any other form easily.
 Version: 6.2.0
 Author: WP White Security
