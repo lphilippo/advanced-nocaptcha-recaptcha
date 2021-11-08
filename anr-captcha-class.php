@@ -196,6 +196,11 @@ if ( ! class_exists( 'anr_captcha_class' ) ) {
 		}
 
 		function footer_script() {
+            $ip = $this->get_remote_ip();
+            if ($this->is_remote_ip_whitelisted($ip)) {
+                return;
+            }
+
 			static $included = false;
 
 			$number          = $this->total_captcha();
