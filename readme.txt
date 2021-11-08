@@ -4,7 +4,7 @@ Tags: recaptcha, nocaptcha, captcha, invisible captcha, bot, spam protection, ca
 Donate link: https://www.shamimsplugins.com/products/advanced-nocaptcha-and-invisible-captcha-pro/
 Requires at least: 4.4
 Tested up to: 5.8.1
-Stable tag: 6.1.7
+Stable tag: 6.2.0
 Requires PHP: 5.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -93,7 +93,12 @@ You can access your file via FTP or file manager and rename "advanced-nocaptcha-
 
 == Changelog ==
 
-= 6.1.7 (20211006) =
+= 6.2.0 (20211108) =
+
+* FIX: Correctly detect requests from whitelisted ip addresses, when proxy is used.
+* IMPROVEMENT: Apply PHP CS Fixer corrections over full code base.
+
+= 6.2.06.1.7 (20211006) =
 
 * IMPROVEMENT: Updated all the FAQs and help text links to point to the new documentation pages.
 * IMPROVEMENT: Improved the help text for CAPTCHA v3 to better explain the severity scoring system.

@@ -14,6 +14,37 @@ if ( ! class_exists( 'anr_captcha_class' ) ) {
 			return self::$instance;
 		}
 
+        /**
+         * Provides the remote IP for the current request, whether a proxy is in place or not.
+         *
+         * @param string $remoteIp
+         *
+         * @return string|null
+         */
+        protected function get_remote_ip()
+        {
+            if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER)) {
+                return explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0];
+            }
+            if (array_key_exists('REMOTE_ADDR', $_SERVER)) {
+                return explode(',', $_SERVER['REMOTE_ADDR'])[0];
+            }
+        }
+
+        /**
+         * Determine if the provide IP address is whitelisted.
+         *
+         * @param string $remoteIp
+         *
+         * @return bool
+         */
+        protected function is_remote_ip_whitelisted($remoteIp)
+        {
+            $whitelistedIps = array_filter(explode("\n", anr_get_option('whitelisted_ips')));
+
+            return in_array($remoteIp, $whitelistedIps);
+        }
+
 		function actions_filters() {
 			if ( anr_is_form_enabled( 'fep_contact_form' ) ) {
 				add_action( 'fepcf_message_form_after_content', array( $this, 'form_field' ), 99 );
@@ -364,10 +395,11 @@ if ( ! class_exists( 'anr_captcha_class' ) ) {
 			if ( is_user_logged_in() && anr_get_option( 'loggedin_hide' ) ) {
 				return $return;
 			}
-			$ip = $_SERVER['REMOTE_ADDR'];
-			if ( in_array( $ip, array_filter( explode( '\n', anr_get_option( 'whitelisted_ips' ) ) ) ) ) {
-				return $return;
-			}
+            $ip = $this->get_remote_ip();
+            if ($this->is_remote_ip_whitelisted($ip)) {
+                return $return;
+            }
+
 			return $return . $this->captcha_form_field();
 		}
 
@@ -396,10 +428,12 @@ if ( ! class_exists( 'anr_captcha_class' ) ) {
 			global $wpdb;
 
 			$show_captcha = true;
-			$ip           = $_SERVER['REMOTE_ADDR'];
-			if ( in_array( $ip, array_filter( explode( '\n', anr_get_option( 'whitelisted_ips' ) ) ) ) ) {
-				return false;
-			}
+
+            $ip = $this->get_remote_ip();
+            if ($this->is_remote_ip_whitelisted($ip)) {
+                return false;
+            }
+
 			// filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE );
 			$count   = absint( anr_get_option( 'failed_login_allow' ) );
 			$post_id = $this->post_id();
@@ -452,12 +486,12 @@ if ( ! class_exists( 'anr_captcha_class' ) ) {
 			}
 	
 			$secre_key  = trim( anr_get_option( 'secret_key' ) );
-			$remoteip = $_SERVER['REMOTE_ADDR'];
 			$verify = false;
 
-			if ( in_array( $remoteip, array_filter( explode( '\n', anr_get_option( 'whitelisted_ips' ) ) ) ) ) {
-				return true;
-			}
+            $remoteip = $this->get_remote_ip();
+            if ($this->is_remote_ip_whitelisted($remoteip)) {
+                return true;
+            }
 			
 			if ( false === $response ) {
 				$response = isset( $_POST['g-recaptcha-response'] ) ? $_POST['g-recaptcha-response'] : '';
