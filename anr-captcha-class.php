@@ -40,7 +40,12 @@ if ( ! class_exists( 'anr_captcha_class' ) ) {
          */
         protected function is_remote_ip_whitelisted($remoteIp)
         {
-            $whitelistedIps = array_filter(explode("\n", anr_get_option('whitelisted_ips')));
+            $whitelistedIps = array_map(
+                function($ip) {
+                    return trim($ip);
+                }, 
+                array_filter(explode("\n", anr_get_option('whitelisted_ips')))
+            );
 
             return in_array($remoteIp, $whitelistedIps);
         }
